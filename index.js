@@ -7,7 +7,7 @@ const app = express();
 // Endpoint 1: /
 app.get('/', (req, res) => {
   res.statusCode = 200;
-  const msg = 'Hello from Farmers Market! Demo';
+  const msg = 'Welcome to Staret-foods!';
   res.send(msg);
 });
 

@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run installation of dependencies command
         run: npm audit
-  run_unit_tests:
+  run-unit-tests:
     - name: Run Unit Tests
       needs: vulnerabilities-audit
       runs-on: ubuntu-latest

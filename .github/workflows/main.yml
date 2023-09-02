@@ -44,7 +44,6 @@ jobs:
       - name: Run installation of dependencies command
         run: npm audit
   run-unit-tests:
-    needs: vulnerabilities-audit
     runs-on: ubuntu-latest
     steps: 
     - name: Check out code

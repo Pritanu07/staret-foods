@@ -1,23 +1,20 @@
 const request = require('supertest');
-const server = require('./server'); // Import the server
+const server = require('./index');
 
 describe('Express App', () => {
-  afterAll((done) => {
-    server.close(done); // Close the server after all tests
+  afterAll(() => {
+    server.close();
   });
 
-  it('responds with status 200 for the root URL', async () => {
+  it('should respond with "Hello from Farmers Market! Demo" when hitting the root endpoint', async () => {
     const response = await request(server).get('/');
     expect(response.status).toBe(200);
+    expect(response.text).toBe('Hello from Farmers Market! Demo');
   });
 
-  it('responds with status 200 for the /meetings URL', async () => {
-    const response = await request(server).get('/meetings');
+/*   it('should respond with "Hello from /test Node!" when hitting the /test endpoint', async () => {
+    const response = await request(server).get('/test');
     expect(response.status).toBe(200);
-  });
-
-  it('responds with status 200 for the /meeting-details URL', async () => {
-    const response = await request(server).get('/meeting-details');
-    expect(response.status).toBe(200);
-  });
+    expect(response.text).toBe('Hello from /test Node!');
+  }); */
 });

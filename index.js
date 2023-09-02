@@ -1,29 +1,26 @@
+// index.js (Express app)
+
 const express = require('express');
+
 const app = express();
-const port = 8080;
 
-app.use(express.static('public'));
-app.use('/css', express.static(__dirname + 'staret-foods-html/css'));
-app.use('/js', express.static(__dirname + 'staret-foods-html/js'));
-app.use('/img', express.static(__dirname + 'staret-foods-html/img'));
-app.use('/vendor', express.static(__dirname + 'staret-foods-html/vendor'));
-
-app.set('views', './views');
-app.set('view engine', 'ejs');
-app.get('', (req, res) => {
-  res.render('index', { text: 'This is EJS' });
+// Endpoint 1: /
+app.get('/', (req, res) => {
+  res.statusCode = 200;
+  const msg = 'Hello from Farmers Market! Demo';
+  res.send(msg);
 });
 
-app.get('/meetings', (req, res) => {
-  res.render('meetings', { text: 'Meetings Page' });
+/* // Endpoint 2: /test
+app.get('/test', (req, res) => {
+  res.statusCode = 200;
+  const msg = 'Hello from /test Node!';
+  res.send(msg);
+});
+ */
+// Start the server
+const server = app.listen(8080, () => {
+  console.log('Server started on http://localhost:8080');
 });
 
-app.get('/meeting-details', (req, res) => {
-  res.render('meeting-details', { text: 'Meeting Details Page' });
-});
-
-const server = app.listen(port, () => {
-  console.info(`Listening on port ${port}`);
-});
-
-module.exports = server; // Export the server for testing
+module.exports = server; // Export server instance for testing

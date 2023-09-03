@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "priya-ecs2-task" {
   container_definitions = jsonencode([
     {
       name  = local.application_name
-      image = "255945442255.dkr.ecr.ap-southeast-1.amazonaws.com/priya-ecr2:latest"
+      image = "255945442255.dkr.ecr.ap-southeast-1.amazonaws.com/${local.application_name}:latest"
       portMappings = [
         {
           containerPort = 8080

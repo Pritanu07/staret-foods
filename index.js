@@ -1,14 +1,20 @@
 // index.js (Express app)
 
 const express = require('express');
-
+const path = require('path');
 const app = express();
+app.use(express.static('src'));
 
 // Endpoint 1: /
+// app.get('/', (req, res) => {
+//   res.statusCode = 200;
+//   const msg = 'Welcome to Staret-foods!';
+//   res.send(msg);
+// });
+
 app.get('/', (req, res) => {
-  res.statusCode = 200;
-  const msg = 'Welcome to Staret-foods!';
-  res.send(msg);
+  // Send the 'index.html' file as-is
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
 /* // Endpoint 2: /test

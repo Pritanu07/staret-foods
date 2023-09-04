@@ -18,7 +18,7 @@ name: CI/CD
 env:
   AWS_REGION: ap-southeast-1
   ECR_REPOSITORY: priya-ecr2
-  ECS_SERVICE: priya-ecs2-services
+  ECS_SERVICE: priya-ecs2-service
   ECS_CLUSTER: priya-ecs2-cluster
   CONTAINER_NAME: priya-ecs2-task
 jobs:
@@ -76,12 +76,12 @@ jobs:
         env:
           ECR_REGISTRY: '${{ steps.login-ecr.outputs.registry }}'
           IMAGE_TAG: '${{ github.sha }}'
-        #run: |
-          #docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
-          #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-          #echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition priya-ecs2-task --query
@@ -97,7 +97,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: '${{ steps.task-def.outputs.task-definition }}'
-          service: '${{ env.priya-ecs2-services }}'
+          service: '${{ env.priya-ecs2-service }}'
           cluster: '${{ env.priya-ecs2-cluster }}'
           wait-for-service-stability: true
           ACCESS_KEY: '${ssm:priya-key}'

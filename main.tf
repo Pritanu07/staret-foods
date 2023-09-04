@@ -31,12 +31,12 @@ resource "aws_ecs_task_definition" "priya-ecs2-task" {
   memory = "1024"
 }
 
-resource "aws_ecs_cluster" "priya-ecs2-cluster" {
+resource "aws_ecs_cluster" "priya-ecs2-cluster" { 
   name = "${local.application_name}-cluster"
-}
+} 
 
-resource "aws_ecs_service" "priya-ecs2-services" {
-  name            = "${local.application_name}-service"
+resource "aws_ecs_service" "priya-ecs2-service" {
+  name            = "${local.application_name}-service" 
   cluster         = aws_ecs_cluster.priya-ecs2-cluster.id
   task_definition = aws_ecs_task_definition.priya-ecs2-task.arn
   launch_type     = "FARGATE"

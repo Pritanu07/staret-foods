@@ -6,7 +6,7 @@ describe('Express App', () => {
     server.close();
   });
 
-  it('should respond with "Hello from Farmers Market! Demo" when hitting the root endpoint', async () => {
+  it('should respond with "Welcome to staret-foods" when hitting the root endpoint', async () => {
     const response = await request(server).get('/');
     expect(response.status).toBe(200);
     

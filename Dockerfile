@@ -1,6 +1,6 @@
-FROM public.ecr.aws/bitnami/node:latest
+FROM node:16-alpine
 
-WORKDIR /user/src/app
+WORKDIR /my-app
 
 COPY package*.json ./
 

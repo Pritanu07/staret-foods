@@ -63,7 +63,7 @@ jobs:
       run: |
         terraform init
         echo "Checking if ECR repository already exists..."
-        if terraform state show aws_ecr_repository.priya-ecr2; then
+        if terraform state show aws_ecr_repository.priya-ecr3; then
           echo "ECR repository already exists."
           echo "::set-output name=exists::true"
         else

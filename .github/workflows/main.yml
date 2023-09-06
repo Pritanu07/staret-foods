@@ -73,7 +73,7 @@ jobs:
 
     - name: Deploy ECR using Terraform
       if: steps.check_ecr.outputs.exists == 'false'
-      working-directory: ecr
+      #working-directory: ecr
       run: |
         terraform init
         terraform apply -auto-approve

@@ -59,7 +59,7 @@ jobs:
 
     - name: Check if ECR repository already exists
       id: check_ecr
-      working-directory: ecr
+      working-directory: c:/users/sanka/staret-foods
       run: |
         terraform init
         echo "Checking if ECR repository already exists..."

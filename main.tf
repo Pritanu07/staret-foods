@@ -36,7 +36,7 @@ resource "aws_ecs_cluster" "priya-ecs2-cluster" {
 }
 
 resource "aws_ecs_service" "priya-ecs2-service" {
-  name            = "${local.application_name}-service"
+  name            = "${local.application_name}-service" 
   cluster         = aws_ecs_cluster.priya-ecs2-cluster.id
   task_definition = aws_ecs_task_definition.priya-ecs2-task.arn
   launch_type     = "FARGATE"
@@ -45,6 +45,7 @@ resource "aws_ecs_service" "priya-ecs2-service" {
     assign_public_ip = true
     security_groups = ["sg-b4db57fc"]
   }
+  
   scheduling_strategy = "REPLICA"
   desired_count       = 1
   platform_version    = "LATEST"

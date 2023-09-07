@@ -95,7 +95,7 @@ jobs:
     
     - name: Download task definition
       run: |
-        NEW_TASK_DEFINTION=$(aws ecs describe-task-definition --task-definition $NAME \
+        NEW_TASK_DEFINTION=$(aws ecs describe-task-definition --task-definition priya-ecs2-task \
         --query '{  containerDefinitions: taskDefinition.containerDefinitions,
                     family: taskDefinition.family,
                     taskRoleArn: taskDefinition.taskRoleArn,
@@ -107,8 +107,8 @@ jobs:
                     cpu: taskDefinition.cpu,
                     memory: taskDefinition.memory}')
       
-        aws ecs register-task-definition  --family $NAME --cli-input-json "$NEW_TASK_DEFINTION"
-        aws ecs update-service --cluster $NAME --service $NAME --task-definition $NAME
+        aws ecs register-task-definition  --family task-family --cli-input-json "$NEW_TASK_DEFINTION"
+        aws ecs update-service --cluster priya-ecs2-cluster --service priya-ecs2-service --task-definition priya-ecs2-task
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def

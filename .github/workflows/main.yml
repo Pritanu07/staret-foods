@@ -94,10 +94,10 @@ jobs:
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
     
     - name: Download task definition
-      run: |
-        aws ecs describe-task-definition --task-definition priya-ecs2-tasks --query taskDefinition > task-definition.json
-        # LATEST_TASK_DEFINITION=$(aws ecs describe-task-definition  --task-definition ${TASK_FAMILY})
-       #echo $LATEST_TASK_DEFINITION \ | jq '{containerDefinitions: .taskDefinition.containerDefinitions, volumes: .taskDefinition.volumes}' \ | jq '.containerDefinitions[0].image='\"${DOCKER_IMAGE}\" \ > /tmp/tmp.json
+      #run: |
+        #aws ecs describe-task-definition --task-definition priya-ecs2-tasks --query taskDefinition > task-definition.json
+        LATEST_TASK_DEFINITION=$(aws ecs describe-task-definition  --task-definition ${TASK_FAMILY})
+        echo $LATEST_TASK_DEFINITION \ | jq '{containerDefinitions: .taskDefinition.containerDefinitions, volumes: .taskDefinition.volumes}' \ | jq '.containerDefinitions[0].image='\"${DOCKER_IMAGE}\" \ > /tmp/tmp.json
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1

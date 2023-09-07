@@ -95,8 +95,13 @@ jobs:
     
     - name: Download task definition
       run: |
-        aws ecs describe-task-definition --task-definition priya-ecs2-service --query taskDefinition > task-definition.json
-
+        aws ecs register-task-definition \ 
+        --family myapp \ 
+        --cli-input-json file:///tmp/task.json \
+        --requires-compatibilities FARGATE \
+        --network-mode awsvpc \
+        --cpu 1024 --memory 2048 \
+        --task-role-arn <arn> --execution-role-arn <arn>
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1

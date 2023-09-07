@@ -1,305 +1,136 @@
-A collection cannot be both a mapping and a sequence (1:1)
->  1 | name: Deploy to ECR - Build Docker Image - Deploy ECS
-     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->  2 |
-     | ^
->  3 | on:
-     | ^
->  4 | push:
-     | ^
->  5 | branches:
-     | ^
->  6 | - main
-     | ^
->  7 |
-     | ^
->  8 | jobs:
-     | ^
->  9 | vulnerabilities-audit:
-     | ^
->  10 | name: Check for Vulnerabilities with npm audit
-      | ^
->  11 | runs-on: ubuntu-latest
-      | ^
->  12 | steps:
-      | ^
->  13 | - name: Check out code
-      | ^
->  14 | uses: actions/checkout@v2
-      | ^
->  15 | - name: Set up Node.js
-      | ^
->  16 | uses: actions/setup-node@v2
-      | ^
->  17 | with:
-      | ^
->  18 |   node-version: '16'
-      | ^
->  19 | - name: Install dependencies
-      | ^
->  20 | run: npm install
-      | ^
->  21 | - name: Run npm audit
-      | ^
->  22 | run: npm audit
-      | ^
->  23 |
-      | ^
->  24 | run_unit_tests:
-      | ^
->  25 | name: Run Unit Tests
-      | ^
->  26 | needs: vulnerabilities-audit
-      | ^
->  27 | runs-on: ubuntu-latest
-      | ^
->  28 | steps:
-      | ^
->  29 | - name: Check out code
-      | ^
->  30 | uses: actions/checkout@v2
-      | ^
->  31 | - name: Set up Node.js
-      | ^
->  32 | uses: actions/setup-node@v2
-      | ^
->  33 | with:
-      | ^
->  34 |   node-version: '16'
-      | ^
->  35 | - name: Install dependencies
-      | ^
->  36 | run: npm install
-      | ^
->  37 | - name: Run unit tests
-      | ^
->  38 | run: npm test
-      | ^
->  39 |
-      | ^
->  40 | ecr_creation:
-      | ^
->  41 | name: Create ECR Repository
-      | ^
->  42 | needs: run_unit_tests
-      | ^
->  43 | runs-on: ubuntu-latest
-      | ^
->  44 | steps:
-      | ^
->  45 | - name: Check out code
-      | ^
->  46 | uses: actions/checkout@v2
-      | ^
->  47 |
-      | ^
->  48 | - name: Configure AWS credentials
-      | ^
->  49 | uses: aws-actions/configure-aws-credentials@v1
-      | ^
->  50 | with:
-      | ^
->  51 |   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      | ^
->  52 |   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      | ^
->  53 |   aws-region: ap-southeast-1
-      | ^
->  54 |
-      | ^
->  55 | - name: Set up Terraform
-      | ^
->  56 | uses: hashicorp/setup-terraform@v1
-      | ^
->  57 | with:
-      | ^
->  58 |   terraform_version: 1.0.0
-      | ^
->  59 | phases:
-      | ^
->  60 | pre_build:
-      | ^
->  61 |   commands:
-      | ^
->  62 |   - echo Logging in to Amazon ECR...
-      | ^
->  63 |   - echo $AWS_DEFAULT_REGION
-      | ^
->  64 |   # - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 940401905947.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      | ^
->  65 |   - REPOSITORY_NAME="priya-ecr2"      
-      | ^
->  66 |   - REPOSITORY_URI=255945442255.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPOSITORY_NAME
-      | ^
->  67 |   - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      | ^
->  68 |   - IMAGE_TAG=${COMMIT_HASH:=latest}
-      | ^
->  69 | build:
-      | ^
->  70 |   commands:
-      | ^
->  71 |   - echo Building the Docker image...
-      | ^
->  72 |   - docker build -t $REPOSITORY_NAME:latest .
-      | ^
->  73 |   - docker tag $REPOSITORY_NAME:latest $REPOSITORY_URI:latest
-      | ^
->  74 |   - docker tag $REPOSITORY_NAME:latest $REPOSITORY_URI:$IMAGE_TAG
-      | ^
->  75 | post_build:
-      | ^
->  76 |   commands:
-      | ^
->  77 |   - docker push $REPOSITORY_URI:latest
-      | ^
->  78 |   - docker push $REPOSITORY_URI:$IMAGE_TAG
-      | ^
->  79 |   - printf '[{"name":"priya-ecs2-task","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      | ^
->  80 |
-      | ^
->  81 | #artifacts:
-      | ^
->  82 | #files: imagedefinitions.json
-      | ^
->  83 | #- name: Check if ECR repository already exists
-      | ^
->  84 | #id: check_ecr
-      | ^
->  85 | # working-directory: ecr
-      | ^
->  86 | #run: |
-      | ^
->  87 |   # terraform init
-      | ^
->  88 | #- name: Deploy ECR using Terraform
-      | ^
->  89 | #if: steps.check_ecr.outputs.exists == 'false'
-      | ^
->  90 | #working-directory: ecr
-      | ^
->  91 | # run: |
-      | ^
->  92 |   #terraform init
-      | ^
->  93 |   # terraform apply -auto-approve
-      | ^
->  94 |
-      | ^
->  95 | #docker_build_push:
-      | ^
->  96 | #name: Build Docker Image and Push to ECR
-      | ^
->  97 | #needs: ecr_creation
-      | ^
->  98 | # runs-on: ubuntu-latest
-      | ^
->  99 |
-      | ^
-> 100 | #steps:
-      | ^
-> 101 | #- name: Check out code
-      | ^
-> 102 | # uses: actions/checkout@v2
-      | ^
-> 103 |
-      | ^
-> 104 | # - name: Configure AWS credentials
-      | ^
-> 105 | #uses: aws-actions/configure-aws-credentials@v1
-      | ^
-> 106 | # with:
-      | ^
-> 107 |   #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      | ^
-> 108 |   # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      | ^
-> 109 |   # aws-region: ap-southeast-1
-      | ^
-> 110 |
-      | ^
-> 111 | #- name: Log in to Amazon ECR
-      | ^
-> 112 | #id: login-ecr
-      | ^
-> 113 | #uses: aws-actions/amazon-ecr-login@v1
-      | ^
-> 114 |
-      | ^
-> 115 | #- name: Build and Push Docker image to Amazon ECR
-      | ^
-> 116 | #env:
-      | ^
-> 117 |   #ECR_REGISTRY: 255945442255.dkr.ecr.ap-southeast-1.amazonaws.com
-      | ^
-> 118 |   #ECR_REPOSITORY: priya-devsecops-application
-      | ^
-> 119 |   #IMAGE_TAG: latest
-      | ^
-> 120 | #run: |
-      | ^
-> 121 |   # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-      | ^
-> 122 |   #docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      | ^
-> 123 |
-      | ^
-> 124 | terraform_force_deployment:
-      | ^
-> 125 | name: Force New Deployment with Terraform
-      | ^
-> 126 | needs: [docker_build_push, ecr_creation]
-      | ^
-> 127 | runs-on: ubuntu-latest
-      | ^
-> 128 |
-      | ^
-> 129 | steps:
-      | ^
-> 130 | - name: Check out code
-      | ^
-> 131 | uses: actions/checkout@v2
-      | ^
-> 132 |
-      | ^
-> 133 | - name: Configure AWS credentials
-      | ^
-> 134 | uses: aws-actions/configure-aws-credentials@v1
-      | ^
-> 135 | with:
-      | ^
-> 136 |   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      | ^
-> 137 |   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      | ^
-> 138 |   aws-region: ap-southeast-1
-      | ^
-> 139 |
-      | ^
-> 140 | - name: Set up Terraform
-      | ^
-> 141 | uses: hashicorp/setup-terraform@v1
-      | ^
-> 142 | with:
-      | ^
-> 143 |   terraform_version: 1.0.0
-      | ^
-> 144 |
-      | ^
-> 145 | - name: Taint ECS service for force new deployment
-      | ^
-> 146 | #working-directory: ecs
-      | ^
-> 147 | run: |
-      | ^
-> 148 |   terraform init
-      | ^
-> 149 |   terraform taint aws_ecs_service.priya-ecs2-service
-      | ^
-> 150 |   terraform apply -auto-approve
-      | ^
-> 151 |
-      | ^
-> 152 |
-      | ^
+name: Deploy to ECR - Build Docker Image - Deploy ECS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  vulnerabilities-audit:
+    name: Check for Vulnerabilities with npm audit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Install dependencies
+      run: npm install
+    - name: Run npm audit
+      run: npm audit
+
+  run_unit_tests:
+    name: Run Unit Tests
+    needs: vulnerabilities-audit
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Install dependencies
+      run: npm install
+    - name: Run unit tests
+      run: npm test
+
+  ecr_creation:
+    name: Create ECR Repository
+    needs: run_unit_tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-1
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Check if ECR repository already exists
+      id: check_ecr
+     # working-directory: ecr
+      run: |
+        terraform init
+       # echo "Checking if ECR repository already exists..."
+        #if terraform state show aws_ecr_repository.my_ecr_repo; then
+          #echo "ECR repository already exists."
+         # echo "::set-output name=exists::true"
+        #else
+          echo "ECR repository doesn't exist."
+          echo "::set-output name=exists::false"
+        fi
+
+    - name: Deploy ECR using Terraform
+      if: steps.check_ecr.outputs.exists == 'false'
+      #working-directory: ecr
+      run: |
+        terraform init
+        terraform apply -auto-approve
+  
+  docker_build_push:
+    name: Build Docker Image and Push to ECR
+    needs: ecr_creation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-1
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and Push Docker image to Amazon ECR
+      env:
+        ECR_REGISTRY: 255945442255.dkr.ecr.ap-southeast-1.amazonaws.com
+        ECR_REPOSITORY: priya-devsecops-application
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  terraform_force_deployment:
+    name: Force New Deployment with Terraform
+    needs: [docker_build_push, ecr_creation]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-1
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.0.0
+
+    - name: Taint ECS service for force new deployment
+      #working-directory: ecs
+      run: |
+        terraform init
+        terraform taint aws_ecs_service.priya-ecs2-service
+        terraform apply -auto-approve

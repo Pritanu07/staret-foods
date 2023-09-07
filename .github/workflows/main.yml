@@ -4,13 +4,13 @@ on:
 push:
 #branches:
 #- main
-#paths-ignore:
+paths-ignore:
 - '**.tf'      
 pull_request:
 #branches:
 #- main
-#paths-ignore:
-#- '**.tf'
+paths-ignore:
+- '**.tf'
 workflow_run:
 workflows:
 - "Terraform Workflow"

@@ -4,13 +4,13 @@ on:
 push:
 #branches:
 #- main
-paths-ignore:
+#paths-ignore:
 - '**.tf'      
 pull_request:
 #branches:
 #- main
 #paths-ignore:
-- '**.tf'
+#- '**.tf'
 workflow_run:
 workflows:
 - "Terraform Workflow"
@@ -49,12 +49,11 @@ steps:
 - name: Run tests
   run: npm test   
 
-#scan-dependencies
 scan-dependencies:
 runs-on: ubuntu-latest
 needs: build-and-test
 
-steps:
+  steps:
 - name: Checkout code
   uses: actions/checkout@v2
 - name: Run installation of dependencies command

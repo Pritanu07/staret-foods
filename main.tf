@@ -1,58 +1,100 @@
+## Provider AWS
+
 provider "aws" {
   region = "ap-southeast-1"
 }
 
-locals {
-  application_name = "priya-devsecops-application"
+## Create VPC
+
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "awsvpc"
+  cidr = "172.31.0.0/16"
+
+  azs             = ["ap-southeast-1a", "ap-southeast-1c"]
+  #private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["172.31.32.0/20", "172.31.0.0/20"]
+
+  /*   enable_nat_gateway = true
+  enable_vpn_gateway = true */
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }
 
-resource "aws_ecs_task_definition" "priya-ecs2-task" {
-  family                   = local.application_name
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-  execution_role_arn      = "arn:aws:iam::255945442255:role/ecsTaskExecutionRole"
+## ECS Module
 
-  container_definitions = jsonencode([
-    {
-      name  = local.application_name
-      image = "255945442255.dkr.ecr.ap-southeast-1.amazonaws.com/${local.application_name}:latest"
-      portMappings = [
-        {
-          containerPort = 8080
-          hostPort      = 8080
-          protocol      = "tcp"
-        }
-      ]
-      essential = true
+module "ecs" {
+  source = "terraform-aws-modules/ecs/aws"
+
+  cluster_name = "priya-ecs2-cluster"
+
+  fargate_capacity_providers = {
+    FARGATE = {
+      default_capacity_provider_strategy = {
+        weight = 100
+      }
     }
-  ])
-
-  cpu    = "512"
-  memory = "1024"
-}
-
-resource "aws_ecs_cluster" "priya-ecs2-cluster" {
-  name = "${local.application_name}-cluster"
-}
-
-resource "aws_ecs_service" "priya-ecs2-service" {
-  name            = "${local.application_name}-service" 
-  cluster         = aws_ecs_cluster.priya-ecs2-cluster.id
-  task_definition = aws_ecs_task_definition.priya-ecs2-task.arn
-  launch_type     = "FARGATE"
-  network_configuration {
-    subnets        = ["subnet-04056e91a09a5b4bf", "subnet-bea677f6", "subnet-29ed7170"]
-    assign_public_ip = true
-    security_groups = ["sg-b4db57fc"]
   }
-  
-  scheduling_strategy = "REPLICA"
-  desired_count       = 1
-  platform_version    = "LATEST"
-  deployment_controller {
-    type = "ECS"
+
+  services = {
+    priya-ecs2-task = { #td name
+      cpu    = 512
+      memory = 1024
+
+      # Container definition(s)
+      container_definitions = {
+
+        priya-ecs2-container = { #container name
+          essential = true
+          image     = "public.ecr.aws/docker/library/httpd:latest"
+          port_mappings = [
+            {
+              name          = "ecs-sample"
+              containerPort = 8080
+              protocol      = "tcp"
+            }
+          ]
+          readonly_root_filesystem = false
+
+        }
+      }
+      assign_public_ip                   = true
+      deployment_minimum_healthy_percent = 100
+      subnet_ids                         = ["subnet-bea677f6", "subnet-29ed7170"]
+      security_group_rules = {
+        ingress_all = {
+          type        = "ingress"
+          from_port   = 0
+          to_port     = 0
+          protocol    = "-1"
+          description = "Allow all"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+        egress_all = {
+          type        = "egress"
+          from_port   = 0
+          to_port     = 0
+          protocol    = "-1"
+          cidr_blocks = ["0.0.0.0/0"]
+        }
+      }
+    }
   }
-  deployment_maximum_percent = 200
-  deployment_minimum_healthy_percent = 100
-  enable_ecs_managed_tags = true
+
 }
+
+
+##Test TF Workflow with EC2 2
+
+ resource "aws_instance" "priya-ec2" {
+  ami = "ami-0464f90f5928bccb8"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "priya-ec2"
+  }
+}  
+ 

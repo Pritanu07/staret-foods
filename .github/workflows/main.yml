@@ -22,9 +22,9 @@ on:
 env:            
   AWS_REGION: ap-southeast-1          
   ECR_REPOSITORY: priya-ecr2
-  ECS_SERVICE: priya-ecs-service         
+  ECS_SERVICE: priya-ecs2-service         
   ECS_CLUSTER: priya-ecs2-cluster                   
-  CONTAINER_NAME: priya-ecs2-task         
+  CONTAINER_NAME: priya-ecs2-container        
                                                
 
 # permissions:
@@ -102,7 +102,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: ${{ env.priya-ecs2-task }}
+        container-name: ${{ env.priya-ecs2-container }}
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition

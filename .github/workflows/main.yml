@@ -95,7 +95,7 @@ jobs:
     
     - name: Download task definition
       run: |
-       aws describe-task-definition --task-definition priya-ecs2-task \
+       aws describe-task-definition --task-definition priya-ecs2-service \
        --query 'taskDefinition.{containerDefinitions:containerDefinitions}' \
         > /tmp/task-definitions.json 
 

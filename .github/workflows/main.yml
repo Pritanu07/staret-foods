@@ -96,18 +96,19 @@ jobs:
     - name: Download task definition
       run: |
         aws ecs register-task-definition \ 
-        --family myapp \ 
-        --cli-input-json file:///tmp/task.json \
-        --requires-compatibilities FARGATE \
-        --network-mode awsvpc \
-        --cpu 1024 --memory 2048 \
-        --task-role-arn <arn> --execution-role-arn <arn>
+            --family task-family \ 
+            --cli-input-json file:///tmp/task.json \
+            --requires-compatibilities FARGATE \
+            --network-mode awsvpc \
+            --cpu 1024 --memory 2048 \
+            --task-role-arn <arn> --execution-role-arn <arn>
+
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: ${{ env.CONTAINER_NAME }}
+        container-name: ${{ env.priya-ecs2-container }}
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition

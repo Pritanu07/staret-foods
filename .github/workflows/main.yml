@@ -57,12 +57,12 @@ jobs:
       with:
         terraform_version: 1.0.0
 
-    #- name: Check if ECR repository already exists
-      #id: check_ecr
+    - name: Check if ECR repository already exists
+      id: check_ecr
      # working-directory: ecr
-    # run: |
+    run: |
        # terraform init
-    #- name: Deploy ECR using Terraform
+    - name: Deploy ECR using Terraform
       #if: steps.check_ecr.outputs.exists == 'false'
       #working-directory: ecr
       run: |
@@ -120,7 +120,7 @@ jobs:
         terraform_version: 1.0.0
 
     - name: Deploy ECS using Terraform
-      working-directory: ecs
+      #working-directory: ecs
       run: |
         terraform init
         terraform apply -auto-approve

@@ -1,12 +1,12 @@
-  name: CI/CD
+name: CI/CD
 
-  on:
-    push:
-      ["*"]
+on:
+  push:
+    ["*"]
     
   #ECS Deployment
 
-  env:            
+env:            
     AWS_REGION: ap-southeast-1          
     ECR_REPOSITORY: priya-ecr2
     ECS_SERVICE: priya-ecs2-service         

@@ -15,7 +15,7 @@ data "aws_subnets" "public" {
 module "ecs" {
   source = "terraform-aws-modules/ecs/aws"
 
-  cluster_name = "priya-ecs2-cluster"   #Change
+  cluster_name = "ecs-tf"   #Change
 
   fargate_capacity_providers = {
     FARGATE = {
@@ -26,19 +26,19 @@ module "ecs" {
   }
 
   services = {
-    priya-ecs2-service = { #task def and service name -> #Change
+    ecsdemo = { #task def and service name -> #Change
       cpu    = 512
       memory = 1024
 
       # Container definition(s)
       container_definitions = {
 
-        priya-ecs2-container = { #container name
+        ecs-sample = { #container name
           essential = true 
           image     = "public.ecr.aws/docker/library/httpd:latest"
           port_mappings = [
             {
-              name          = "priya-ecs2-container"  #container name
+              name          = "ecs-sample"  #container name
               containerPort = 8080
               protocol      = "tcp"
             }

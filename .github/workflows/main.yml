@@ -1,22 +1,9 @@
   name: CI/CD
 
   on:
-  push:
-  #branches:
-  #- main
-  #paths-ignore:
-    - '**.tf'      
-  pull_request:
-  #branches:
-  #- main
-  paths-ignore:
-    - '**.tf'
-  workflow_run:
-  workflows:
-    - "Terraform Workflow"
-  types:
-    - completed
-
+    push:
+      ["*"]
+    
   #ECS Deployment
 
   env:            
@@ -73,9 +60,9 @@
 - name: Configure AWS credentials
   uses: aws-actions/configure-aws-credentials@v1
   with:
-  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  aws-region: ${{ env.AWS_REGION }}
+    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws-region: ${{ env.AWS_REGION }}
 
 - name: Login to Amazon ECR
   id: login-ecr

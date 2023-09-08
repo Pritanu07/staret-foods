@@ -90,11 +90,11 @@ module "ecs" {
 
 ##Test TF Workflow with EC2 2
 
- resource "aws_instance" "priya-ec2" {
-  ami = "ami-0464f90f5928bccb8"
-  instance_type = "t2.micro"
-  tags = {
-    Name = "priya-ec2"
-  }
-}  
+# resource "aws_instance" "priya-ec2" {
+  #ami = "ami-0464f90f5928bccb8"
+  #instance_type = "t2.micro"
+ # tags = {
+   # Name = "priya-ec2"
+  
+ 
  

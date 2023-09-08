@@ -4,11 +4,10 @@ name: Terraform Workflow
 
 on:
   push:
-    paths:
-      - '**.tf'
+    ["*"]
   pull_request:
     branches:
-      - '**.tf'
+      ["*"]
 
 jobs:
   terraform:    

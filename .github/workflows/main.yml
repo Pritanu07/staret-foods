@@ -7,9 +7,9 @@ on:
 env:            
   AWS_REGION: ap-southeast-1           
   ECR_REPOSITORY: priya-ecr2       
-  ECS_SERVICE: ecs-demo      
-  ECS_CLUSTER: ecs-tf                  
-  CONTAINER_NAME: ecs-sample        
+  ECS_SERVICE: priya-ecs2-service      
+  ECS_CLUSTER: priya=ecs2-cluster                 
+  CONTAINER_NAME: priya-ecs2-container      
                                                
 
 # permissions:
@@ -48,7 +48,7 @@ jobs:
     
     - name: Download task definition
       run: |
-        aws ecs describe-task-definition --task-definition ecsdemo --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition priya-ecs2-service --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def

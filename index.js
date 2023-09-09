@@ -15,6 +15,7 @@ app.use(express.static('src'));
 app.get('/', (req, res) => {
   // Send the 'index.html' file as-is
   res.sendFile(path.join(__dirname, 'src', 'index.html'));
+  access_key: process.env.ACCESS_KEY
 });
 
 /* // Endpoint 2: /test

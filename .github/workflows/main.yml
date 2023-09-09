@@ -40,13 +40,15 @@ package-scan:
       run: npm install
     - name: Run audit
       run: npm audit
-env: null
+
+env: 
 AWS_REGION: ap-southeast-1
 ECR_REPOSITORY: priya-ecr2
 ECS_SERVICE: priya-ecs2-service
-ECS_CLUSTER: priya=ecs2-cluster
+ECS_CLUSTER: priya-ecs2-cluster
 CONTAINER_NAME: priya-ecs2-container
-jobs: null
+
+jobs: 
 deploy:
   name: Deploy
   runs-on: ubuntu-latest
